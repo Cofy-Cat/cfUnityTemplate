@@ -1,9 +1,10 @@
-﻿using cfEngine.Info;
+﻿using System;
+using cfEngine.Info;
 
 namespace cfEngine.Core.Layer
 {
     public partial class InfoLayer
     {
-        public static readonly InfoManager[] infos = new InfoManager[0];
+        public static readonly IInfoManager[] infos = Array.Empty<IInfoManager>();
     }
 }

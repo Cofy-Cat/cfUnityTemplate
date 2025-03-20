@@ -50,7 +50,7 @@ public class GameEntry : MonoBehaviour
 #endif
             pool = new PoolManager(),
             gsm = new GameStateMachine(),
-            userData = new UserDataManager(new FileStorage(Application.persistentDataPath), JsonSerializer.Instance),
+            userData = new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance),
             auth = new LocalLoginHandler()
         };
         
