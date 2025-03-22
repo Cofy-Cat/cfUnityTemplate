@@ -4,17 +4,17 @@ using cfEngine.Core;
 using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Pooling;
+using cfUnityEngine.Auth;
 using cfUnityEngine.GameState;
 using Object = UnityEngine.Object;
 
-namespace cfEngine.Service
+namespace cfEngine.Core
 {
     public partial class ServiceName
     {
         public static readonly string Info = "Info";
         public static readonly string Asset = "Asset";
         public static readonly string Pool = "Pool";
-        public static readonly string Gsm = "Gsm";
         public static readonly string Auth = "Auth";
         public static readonly string UserData = "UserData";
     }
@@ -26,7 +26,7 @@ namespace cfEngine.Core
     {
         public GameBuilder WithInfo(InfoLayer info)
         {
-            Register(info, ServiceName.Info);
+            Register(info, ServiceName.Gsm);
             return this;
         }
 

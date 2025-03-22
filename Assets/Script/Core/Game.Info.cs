@@ -5,7 +5,7 @@ using cfEngine.Serialize;
 
 namespace cfEngine.Core
 {
-    public static class GameExtension
+    public static partial class GameExtension
     {
         private static InfoManager[] _allInfo = new[]
         {

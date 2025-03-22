@@ -5,6 +5,7 @@ using cfEngine.Core;
 using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Util;
+using cfUnityEngine.Auth;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
@@ -15,7 +16,7 @@ namespace cfUnityEngine.GameState.Bootstrap
 
         protected override void StartContext(StateParam stateParam)
         {
-            var infoLayer = Game.Get<InfoLayer>();
+            var infoLayer = Game.Current.GetInfo();
             infoLayer.RegisterInfo(new InventoryInfoManager());
 
             var infoLoadTasks = infoLayer.InfoMap.Values.Select(info => info.LoadSerializedAsync(Game.TaskToken));

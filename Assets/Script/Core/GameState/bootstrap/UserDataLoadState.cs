@@ -14,10 +14,10 @@ namespace cfUnityEngine.GameState.Bootstrap
 
         private void RegisterSavables()
         {
-            var USER_DATA = Game.Get<UserDataManager>();
+            var USER_DATA = Game.Current.GetUserData();
 
 #if CF_STATISTIC
-            USER_DATA.Register(Game.Get<StatisticService>());
+            USER_DATA.Register(Game.Current.GetStatistic());
 #endif
 #if CF_INVENTORY
             USER_DATA.Register(Game.Get<InventoryService>());
@@ -28,7 +28,7 @@ namespace cfUnityEngine.GameState.Bootstrap
         {
             RegisterSavables();
             
-            var userData = Game.Get<UserDataManager>();
+            var userData = Game.Current.GetUserData();
             userData.LoadDataMap(Game.TaskToken).ContinueWith(t =>
             {
                 if (t.IsCompletedSuccessfully)

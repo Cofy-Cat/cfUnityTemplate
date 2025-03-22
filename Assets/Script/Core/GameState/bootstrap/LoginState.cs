@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using cfEngine.Core;
 using cfEngine.Logging;
 using cfEngine.Util;
+using cfUnityEngine.Auth;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
@@ -55,7 +56,7 @@ namespace cfUnityEngine.GameState.Bootstrap
         {
             var token = Game.TaskToken;
 
-            var auth = Game.Get<IAuthService>();
+            var auth = Game.Current.GetAuth();
             await auth.InitAsync(token);
 
             if (param.Platform == LoginPlatform.FromCached)

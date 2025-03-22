@@ -11,6 +11,7 @@ using cfEngine.Pooling;
 using cfEngine.Serialize;
 using cfEngine.Service;
 using cfEngine.Util;
+using cfUnityEngine.Auth;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
 using UnityEngine;
@@ -69,7 +70,6 @@ public class GameEntry : MonoBehaviour
         
         void OnApplicationQuit()
         {
-            var gsm = Game.Get<GameStateMachine>();
             gsm.OnAfterStateChange -= OnStateChanged;
             Application.quitting -= OnApplicationQuit;
             
@@ -111,7 +111,7 @@ public class GameEntry : MonoBehaviour
 
     private static void RegisterPostBootstrapAction(Action action)
     {
-        var gsm = Game.Get<GameStateMachine>();
+        var gsm = Game.Current.GetGsm();
         if (gsm.CurrentStateId > GameStateId.BootstrapEnd)
         {
             action?.Invoke();
