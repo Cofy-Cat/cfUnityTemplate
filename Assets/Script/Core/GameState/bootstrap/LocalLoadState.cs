@@ -1,3 +1,5 @@
+using cfEngine.Asset;
+using cfEngine.Core;
 using cfEngine.Extension;
 using cfEngine.Util;
 using cfUnityEngine.UI;
@@ -8,9 +10,9 @@ namespace cfUnityEngine.GameState.Bootstrap
     public class LocalLoadState: GameState
     {
         public override GameStateId Id => GameStateId.LocalLoad;
-        protected internal override void StartContext(StateParam param)
+        protected override void StartContext(StateParam param)
         {
-            var uiPrefab = Game.Asset.Load<GameObject>("Local/UIRoot");
+            var uiPrefab = Game.Get<AssetManager<Object>>().Load<GameObject>("Local/UIRoot");
             var ui = Object.Instantiate(uiPrefab).GetComponent<UIRoot>();
 
             ui.Register<LoadingUI>("Local/LoadingUI");
@@ -19,7 +21,6 @@ namespace cfUnityEngine.GameState.Bootstrap
                 t.Result.ShowPanel();
                 StateMachine.ForceGoToState(GameStateId.InfoLoad);
             }, Game.TaskToken);
-            
         }
     }
 }

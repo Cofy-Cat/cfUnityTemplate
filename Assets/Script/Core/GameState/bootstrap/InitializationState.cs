@@ -10,7 +10,7 @@ namespace cfUnityEngine.GameState.Bootstrap
         public override HashSet<GameStateId> Whitelist { get; } = new() { GameStateId.UILoad };
         public override GameStateId Id => GameStateId.Initialization;
 
-        protected internal override void StartContext(StateParam stateParam)
+        protected override void StartContext(StateParam stateParam)
         {
             Initialize().ContinueWith(t =>
             {

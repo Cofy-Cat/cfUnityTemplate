@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using cfEngine.Core.Layer;
-using cfEngine.Meta;
+using cfEngine.Core;
+using cfEngine.Info;
+using cfEngine.Service;
 using cfEngine.Util;
 
 namespace cfUnityEngine.GameState.Bootstrap
@@ -12,11 +13,12 @@ namespace cfUnityEngine.GameState.Bootstrap
         public override HashSet<GameStateId> Whitelist { get; } = new() { GameStateId.Login };
         public override GameStateId Id => GameStateId.InfoLoad;
 
-        protected internal override void StartContext(StateParam stateParam)
+        protected override void StartContext(StateParam stateParam)
         {
-            Game.Info.RegisterInfo(new InventoryInfoManager());
+            var infoLayer = Game.Get<InfoLayer>();
+            infoLayer.RegisterInfo(new InventoryInfoManager());
 
-            var infoLoadTasks = Game.Info.InfoMap.Values.Select(info => info.LoadSerializedAsync(Game.TaskToken));
+            var infoLoadTasks = infoLayer.InfoMap.Values.Select(info => info.LoadSerializedAsync(Game.TaskToken));
             Task.WhenAll(infoLoadTasks).ContinueWith(t =>
             {
                 StateMachine.TryGoToState(GameStateId.Login, new LoginState.Param()

@@ -15,7 +15,7 @@ namespace cfUnityEngine.GameState.Bootstrap
         };
 
         public override GameStateId Id => GameStateId.UILoad;
-        protected internal override void StartContext(StateParam param)
+        protected override void StartContext(StateParam param)
         {
             var ui = UIRoot.Instance;
 

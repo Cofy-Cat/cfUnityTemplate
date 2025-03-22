@@ -1,3 +1,4 @@
+using cfEngine.Service;
 using cfEngine.Util;
 using cfUnityEngine.GameState.Bootstrap;
 
@@ -18,7 +19,7 @@ namespace cfUnityEngine.GameState
     {
     }
 
-    public class GameStateMachine : StateMachine<GameStateId, GameState, GameStateMachine>
+    public class GameStateMachine : StateMachine<GameStateId, GameState, GameStateMachine>, IService
     {
         public GameStateMachine() : base()
         {

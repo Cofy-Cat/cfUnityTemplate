@@ -4,11 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using cfEngine.Asset;
 using cfEngine.Core;
-using cfEngine.Core.Layer;
+using cfEngine.Info;
 using cfEngine.IO;
 using cfEngine.Logging;
 using cfEngine.Pooling;
 using cfEngine.Serialize;
+using cfEngine.Service;
 using cfEngine.Util;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
@@ -23,7 +24,7 @@ public class GameEntry : MonoBehaviour
     {
         try
         {
-            Game.InfoBuildByte();
+            GameExtension.InfoBuildByte();
         }
         catch (Exception e)
         {
@@ -38,32 +39,38 @@ public class GameEntry : MonoBehaviour
         Log.SetLogLevel(LogLevel.Debug);
 
         var cts = new CancellationTokenSource();
-        var initParam = new Game.InitParam()
-        {
-            taskToken = cts.Token,
-            info = new InfoLayer(new StreamingAssetStorage("Info"), JsonSerializer.Instance),
 
-#if CF_ADDRESSABLE
-            asset = new AddressableAssetManager(),
-#else
-            asset = new ResourceAssetManager(),
+        var gameBuilder = new GameBuilder()
+#if CF_STATISTIC
+            .WithService(new cfEngine.Service.Statistic.StatisticService(), nameof(cfEngine.Service.Statistic.StatisticService))
 #endif
-            pool = new PoolManager(),
-            gsm = new GameStateMachine(),
-            userData = new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance),
-            auth = new LocalLoginHandler()
-        };
+            .WithService(new cfEngine.Service.Inventory.InventoryService(),
+                nameof(cfEngine.Service.Inventory.InventoryService))
+#if CF_ADDRESSABLE
+            .WithAsset(new AddressableAssetManager())
+#else
+            .WithAsset(new ResourceAssetManager())
+#endif
+            .WithInfo(new InfoLayer(new StreamingAssetStorage("Info"), JsonSerializer.Instance))
+            .WithPool(new PoolManager())
+            .WithUserData(new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance));
+
+        var auth = new LocalAuthService();
+        auth.RegisterPlatform(new LocalPlatform());
+        gameBuilder.WithAuth(auth);
+
+        var gsm = new GameStateMachine();
+        gsm.OnAfterStateChange += OnStateChanged;
+        gameBuilder.WithGsm(gsm);
         
-        Game.MakeInstance(initParam);
+        Game.SetCurrent(gameBuilder.Build());
         
-        Game.Auth.RegisterPlatform(new LocalPlatform());
-        
-        Game.Gsm.OnAfterStateChange += OnStateChanged;
         Application.quitting += OnApplicationQuit;
         
         void OnApplicationQuit()
         {
-            Game.Gsm.OnAfterStateChange -= OnStateChanged;
+            var gsm = Game.Get<GameStateMachine>();
+            gsm.OnAfterStateChange -= OnStateChanged;
             Application.quitting -= OnApplicationQuit;
             
             cts.Cancel();
@@ -71,7 +78,7 @@ public class GameEntry : MonoBehaviour
             {
                 UIRoot.Instance.Dispose();
             }
-            Game.Dispose();
+            Game.Current.Dispose();
 
 #if CF_REACTIVE_DEBUG
             var notDisposed = cfEngine.Rt._RtDebug.Instance.Collections;
@@ -88,7 +95,7 @@ public class GameEntry : MonoBehaviour
 #endif
         }
         
-        Game.Gsm.TryGoToState(GameStateId.LocalLoad);
+        gsm.TryGoToState(GameStateId.LocalLoad);
     }
 
     private static void OnStateChanged(StateChangeRecord<GameStateId> record)
@@ -104,19 +111,20 @@ public class GameEntry : MonoBehaviour
 
     private static void RegisterPostBootstrapAction(Action action)
     {
-        if (Game.Gsm.CurrentStateId > GameStateId.BootstrapEnd)
+        var gsm = Game.Get<GameStateMachine>();
+        if (gsm.CurrentStateId > GameStateId.BootstrapEnd)
         {
             action?.Invoke();
             return;
         }
         
-        Game.Gsm.OnAfterStateChange += OnBootstrapEnd;
+        gsm.OnAfterStateChange += OnBootstrapEnd;
         void OnBootstrapEnd(StateChangeRecord<GameStateId> record)
         {
             if (record.NewState != GameStateId.BootstrapEnd)
                 return;
             
-            Game.Gsm.OnAfterStateChange -= OnBootstrapEnd;
+            gsm.OnAfterStateChange -= OnBootstrapEnd;
             
             action?.Invoke();
         }

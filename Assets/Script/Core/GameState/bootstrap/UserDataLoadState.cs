@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using cfEngine.Core;
+using cfEngine.Service;
+using cfEngine.Service.Statistic;
 using cfEngine.Util;
 
 namespace cfUnityEngine.GameState.Bootstrap
@@ -11,26 +14,27 @@ namespace cfUnityEngine.GameState.Bootstrap
 
         private void RegisterSavables()
         {
-            var USER_DATA = Game.UserData;
+            var USER_DATA = Game.Get<UserDataManager>();
 
 #if CF_STATISTIC
-            USER_DATA.Register(Game.Meta.Statistic);
+            USER_DATA.Register(Game.Get<StatisticService>());
 #endif
 #if CF_INVENTORY
-            USER_DATA.Register(Game.Meta.Inventory);
+            USER_DATA.Register(Game.Get<InventoryService>());
 #endif
         }
         
-        protected internal override void StartContext(StateParam stateParam)
+        protected override void StartContext(StateParam stateParam)
         {
             RegisterSavables();
             
-            Game.UserData.LoadDataMap(Game.TaskToken).ContinueWith(t =>
+            var userData = Game.Get<UserDataManager>();
+            userData.LoadDataMap(Game.TaskToken).ContinueWith(t =>
             {
                 if (t.IsCompletedSuccessfully)
                 {
                     var dataMap = t.Result;
-                    Game.UserData.InitializeSavables(dataMap);
+                    userData.InitializeSavables(dataMap);
                     
                     StateMachine.TryGoToState(GameStateId.Initialization);
                 }

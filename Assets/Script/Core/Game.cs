@@ -1,53 +1,71 @@
 using System.Threading;
 using cfEngine.Asset;
 using cfEngine.Core;
-using cfEngine.Core.Layer;
-using cfEngine.Meta;
+using cfEngine.Info;
+using cfEngine.Service;
 using cfEngine.Pooling;
 using cfUnityEngine.GameState;
 using Object = UnityEngine.Object;
 
-public partial class Game
+namespace cfEngine.Service
 {
-    public ref struct InitParam
+    public partial class ServiceName
     {
-        public CancellationToken taskToken;
-        public InfoLayer info;
-        public AssetManager<Object> asset;
-        public PoolManager pool;
-        public GameStateMachine gsm;
-        public LoginHandler auth;
-        public UserDataManager userData;
+        public static readonly string Info = "Info";
+        public static readonly string Asset = "Asset";
+        public static readonly string Pool = "Pool";
+        public static readonly string Gsm = "Gsm";
+        public static readonly string Auth = "Auth";
+        public static readonly string UserData = "UserData";
     }
-    
-    public static CancellationToken TaskToken { get; private set; }
-    public static InfoLayer Info { get; private set; }
-    public static AssetManager<Object> Asset { get; private set; }
-    public static PoolManager Pool { get; private set; }
-    public static GameStateMachine Gsm { get; private set; }
-    public static LoginHandler Auth { get; private set; }
-    public static UserDataManager UserData { get; private set; }
-    public static MetaLayer Meta { get; private set; }
+}
 
-    public static void MakeInstance(in InitParam param)
+namespace cfEngine.Core
+{
+    public class GameBuilder : Game
     {
-        Info = param.info;
-        Asset = param.asset;
-        Pool = param.pool;
-        Gsm = param.gsm;
-        Auth = param.auth;
-        TaskToken = param.taskToken;
-        UserData = param.userData;
-        Meta = new MetaLayer();
-    }
+        public GameBuilder WithInfo(InfoLayer info)
+        {
+            Register(info, ServiceName.Info);
+            return this;
+        }
 
-    public static void Dispose()
-    {
-        Info?.Dispose(); Info = null;
-        Asset?.Dispose(); Asset = null;
-        Pool?.Dispose(); Pool = null;
-        Gsm?.Dispose(); Gsm = null;
-        Auth?.Dispose(); Auth = null;
-        Meta?.Dispose(); Meta = null;
+        public GameBuilder WithAsset(AssetManager<Object> asset)
+        {
+            Register(asset, ServiceName.Asset);
+            return this;
+        }
+
+        public GameBuilder WithPool(PoolManager pool)
+        {
+            Register(pool, ServiceName.Pool);
+            return this;
+        }
+
+        public GameBuilder WithGsm(GameStateMachine gsm)
+        {
+            Register(gsm, ServiceName.Gsm);
+            return this;
+        }
+
+        public GameBuilder WithAuth(AuthService auth)
+        {
+            Register(auth, ServiceName.Auth);
+            return this;
+        }
+
+        public GameBuilder WithUserData(UserDataManager userData)
+        {
+            Register(userData, ServiceName.UserData);
+            return this;
+        }
+        
+        public GameBuilder WithService(IService service, string name)
+        {
+            Register(service, name);
+            return this;
+        }
+
+        public Game Build() => this;
     }
 }

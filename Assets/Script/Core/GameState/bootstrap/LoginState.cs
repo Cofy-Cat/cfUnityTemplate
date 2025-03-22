@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using cfEngine.Core;
 using cfEngine.Logging;
 using cfEngine.Util;
 
@@ -18,7 +19,7 @@ namespace cfUnityEngine.GameState.Bootstrap
 
         public override GameStateId Id => GameStateId.Login;
 
-        protected internal override void StartContext(StateParam stateParam)
+        protected override void StartContext(StateParam stateParam)
         {
             if (stateParam is not Param p)
             {
@@ -54,18 +55,19 @@ namespace cfUnityEngine.GameState.Bootstrap
         {
             var token = Game.TaskToken;
 
-            await Game.Auth.InitAsync(token);
+            var auth = Game.Get<IAuthService>();
+            await auth.InitAsync(token);
 
             if (param.Platform == LoginPlatform.FromCached)
             {
-                var loggedInCached = await Game.Auth.TryLoginCachedUserAsync(token);
+                var loggedInCached = await auth.TryLoginCachedUserAsync(token);
 
                 return loggedInCached;
             }
 
-            if (!Game.Auth.IsSessionUserExist())
+            if (!auth.IsSessionUserExist())
             {
-                await Game.Auth.SignUpAsync(param.Platform, param.Token);
+                await auth.SignUpAsync(param.Platform, param.Token);
                 return true;
             }
             else
