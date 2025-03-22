@@ -1,9 +1,9 @@
 {
-    "name": "ProjectName",
+    "name": "Script",
     "rootNamespace": "ProjectName",
     "references": [
-        "GUID:ef861d541f534714da9f7761549e4969",
-        "GUID:ae26c64e42f659a45a101eea519329ca"
+        "cfUnityEngine",
+        "cfEngine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
