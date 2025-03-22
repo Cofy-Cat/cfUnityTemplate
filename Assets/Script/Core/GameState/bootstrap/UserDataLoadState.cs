@@ -20,7 +20,7 @@ namespace cfUnityEngine.GameState.Bootstrap
             USER_DATA.Register(Game.Current.GetStatistic());
 #endif
 #if CF_INVENTORY
-            USER_DATA.Register(Game.Get<InventoryService>());
+            USER_DATA.Register(Game.Current.GetInventory());
 #endif
         }
         
