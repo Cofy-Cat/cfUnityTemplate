@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using cfEngine.Core;
-using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Util;
-using cfUnityEngine.Auth;
+using cfEngine.Service.Auth;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {

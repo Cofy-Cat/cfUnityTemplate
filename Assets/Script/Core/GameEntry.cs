@@ -9,7 +9,7 @@ using cfEngine.Logging;
 using cfEngine.Pooling;
 using cfEngine.Serialize;
 using cfEngine.Util;
-using cfUnityEngine.Auth;
+using cfEngine.Service.Auth;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
 using UnityEngine;
@@ -51,15 +51,16 @@ public class GameEntry : MonoBehaviour
 #endif
             .WithInfo(new InfoLayer(new StreamingAssetStorage("Info"), JsonSerializer.Instance))
             .WithPoolManager(new PoolManager())
-            .WithUserData(new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance));
+            .WithUserData(new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance))
+            .WithAuthService(
+                new AuthService.Builder()
+                    .SetService(new LocalAuthService())
+                    .RegisterPlatform(new LocalPlatform()).Build())
+            .WithGameStateMachine(new GameStateMachine())
+            ;
 
-        var auth = new LocalAuthService();
-        auth.RegisterPlatform(new LocalPlatform());
-        game.WithAuthService(auth);
-
-        var gsm = new GameStateMachine();
+        var gsm = Game.Current.GetGameStateMachine();
         gsm.OnAfterStateChange += OnStateChanged;
-        game.WithGameStateMachine(gsm);
         
         Game.SetCurrent(game);
         

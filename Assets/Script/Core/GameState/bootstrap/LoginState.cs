@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using cfEngine.Core;
 using cfEngine.Logging;
 using cfEngine.Util;
-using cfUnityEngine.Auth;
+using cfEngine.Service.Auth;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
