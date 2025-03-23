@@ -2,14 +2,12 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using cfEngine.Asset;
 using cfEngine.Core;
 using cfEngine.Info;
 using cfEngine.IO;
 using cfEngine.Logging;
 using cfEngine.Pooling;
 using cfEngine.Serialize;
-using cfEngine.Service;
 using cfEngine.Util;
 using cfUnityEngine.Auth;
 using cfUnityEngine.GameState;
@@ -41,30 +39,29 @@ public class GameEntry : MonoBehaviour
 
         var cts = new CancellationTokenSource();
 
-        var gameBuilder = new GameBuilder()
+        var game = new Game()
 #if CF_STATISTIC
-            .WithService(new cfEngine.Service.Statistic.StatisticService(), nameof(cfEngine.Service.Statistic.StatisticService))
+            .WithStatistic(new cfEngine.Service.Statistic.StatisticService())
 #endif
-            .WithService(new cfEngine.Service.Inventory.InventoryService(),
-                nameof(cfEngine.Service.Inventory.InventoryService))
+            .WithInventory(new cfEngine.Service.Inventory.InventoryService())
 #if CF_ADDRESSABLE
-            .WithAsset(new AddressableAssetManager())
+            .WithAsset(new cfUnityEngine.Asset.AddressableAssetManager())
 #else
             .WithAsset(new ResourceAssetManager())
 #endif
             .WithInfo(new InfoLayer(new StreamingAssetStorage("Info"), JsonSerializer.Instance))
-            .WithPool(new PoolManager())
+            .WithPoolManager(new PoolManager())
             .WithUserData(new UserDataManager(new LocalFileStorage(Application.persistentDataPath), JsonSerializer.Instance));
 
         var auth = new LocalAuthService();
         auth.RegisterPlatform(new LocalPlatform());
-        gameBuilder.WithAuth(auth);
+        game.WithAuthService(auth);
 
         var gsm = new GameStateMachine();
         gsm.OnAfterStateChange += OnStateChanged;
-        gameBuilder.WithGsm(gsm);
+        game.WithGameStateMachine(gsm);
         
-        Game.SetCurrent(gameBuilder.Build());
+        Game.SetCurrent(game);
         
         Application.quitting += OnApplicationQuit;
         
@@ -111,7 +108,7 @@ public class GameEntry : MonoBehaviour
 
     private static void RegisterPostBootstrapAction(Action action)
     {
-        var gsm = Game.Current.GetGsm();
+        var gsm = Game.Current.GetGameStateMachine();
         if (gsm.CurrentStateId > GameStateId.BootstrapEnd)
         {
             action?.Invoke();

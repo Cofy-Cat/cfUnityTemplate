@@ -1,21 +1,24 @@
 using cfEngine.Service;
 using cfEngine.Util;
-using cfUnityEngine.GameState;
 using cfUnityEngine.GameState.Bootstrap;
 
 namespace cfEngine.Core
 {
+    using cfUnityEngine.GameState;
     public static partial class ServiceName
     {
-        public const string Gsm = "GameStateMachine";
+        public const string GameStateMachine = "Gsm";
     }
-    
+
     public static partial class GameExtension
     {
-        public static GameStateMachine GetGsm(this Game game)
+        public static Game WithGameStateMachine(this Game game, GameStateMachine service)
         {
-            return game.GetService<GameStateMachine>(ServiceName.Gsm);
+            game.Register(service, ServiceName.GameStateMachine);
+            return game;
         }
+
+        public static GameStateMachine GetGameStateMachine(this Game game) => game.GetService<GameStateMachine>(ServiceName.GameStateMachine);
     }
 }
 
