@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using cfEngine.Core;
+using cfEngine.Logging;
 using cfEngine.Util;
 
 namespace cfUnityEngine.GameState.Bootstrap
@@ -34,10 +36,21 @@ namespace cfUnityEngine.GameState.Bootstrap
             {
                 if (t.IsCompletedSuccessfully)
                 {
-                    var dataMap = t.Result;
-                    userData.InitializeSavables(dataMap);
-                    
-                    StateMachine.TryGoToState(GameStateId.Initialization);
+                    try
+                    {
+                        var dataMap = t.Result;
+                        userData.InitializeSavables(dataMap);
+                        
+                        StateMachine.TryGoToState(GameStateId.Initialization);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.LogException(e);
+                    }
+                }
+                else
+                {
+                    Log.LogException(t.Exception);
                 }
             });
         }
