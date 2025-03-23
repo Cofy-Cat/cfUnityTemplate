@@ -1,6 +1,6 @@
 {
     "name": "Script",
-    "rootNamespace": "ProjectName",
+    "rootNamespace": "RPG",
     "references": [
         "cfUnityEngine",
         "cfEngine"
