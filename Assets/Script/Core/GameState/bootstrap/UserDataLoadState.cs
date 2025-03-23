@@ -20,6 +20,9 @@ namespace cfUnityEngine.GameState.Bootstrap
 #if CF_INVENTORY
             USER_DATA.Register(Game.Current.GetInventory());
 #endif
+#if CF_DIALOGUE
+            USER_DATA.Register(Game.Current.GetDialogue());
+#endif
         }
         
         protected override void StartContext(StateParam stateParam)

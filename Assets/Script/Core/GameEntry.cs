@@ -12,6 +12,7 @@ using cfEngine.Util;
 using cfEngine.Service.Auth;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
+using RPG.Service.Dialogue;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -57,12 +58,13 @@ public class GameEntry : MonoBehaviour
                     .SetService(new LocalAuthService())
                     .RegisterPlatform(new LocalPlatform()).Build())
             .WithGameStateMachine(new GameStateMachine())
+            .WithDialogue(new DialogueService())
             ;
+        
+        Game.SetCurrent(game);
 
         var gsm = Game.Current.GetGameStateMachine();
         gsm.OnAfterStateChange += OnStateChanged;
-        
-        Game.SetCurrent(game);
         
         Application.quitting += OnApplicationQuit;
         
