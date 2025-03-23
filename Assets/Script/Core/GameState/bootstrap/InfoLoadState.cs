@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using cfEngine.Core;
+using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Util;
 using cfEngine.Service.Auth;
+using RPG.Info;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
@@ -16,7 +18,8 @@ namespace cfUnityEngine.GameState.Bootstrap
         protected override void StartContext(StateParam stateParam)
         {
             var infoLayer = Game.Current.GetInfo();
-            infoLayer.RegisterInfo(new InventoryInfoManager());
+            
+            RegisterInfos(infoLayer);
 
             var infoLoadTasks = infoLayer.InfoMap.Values.Select(info => info.LoadSerializedAsync(Game.TaskToken));
             Task.WhenAll(infoLoadTasks).ContinueWith(t =>
@@ -27,6 +30,12 @@ namespace cfUnityEngine.GameState.Bootstrap
                     Token = new LoginToken()
                 });
             }, Game.TaskToken, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void RegisterInfos(InfoLayer info)
+        {
+            info.RegisterInfo(new InventoryInfoManager());
+            info.RegisterInfo(new DialogueInfoManager());
         }
     }
 }

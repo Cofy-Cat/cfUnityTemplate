@@ -2,14 +2,16 @@ using System.Diagnostics;
 using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Serialize;
+using RPG.Info;
 
 namespace cfEngine.Core
 {
     public static partial class GameExtension
     {
-        private static InfoManager[] _allInfo = new[]
+        private static InfoManager[] _allInfo = new InfoManager[]
         {
             new InventoryInfoManager(),
+            new DialogueInfoManager()
         };
 
         [Conditional("UNITY_EDITOR")]

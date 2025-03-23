@@ -69,3 +69,5 @@ UserSettings/
 Assets/StreamingAssets/
 
 Assets/StreamingAssets.meta
+
+*.xlsx#
