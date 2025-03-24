@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8397907057004068231}
   - component: {fileID: 3604889714751353562}
-  - component: {fileID: 3218735453332628272}
+  - component: {fileID: 9176147489553506451}
   m_Layer: 0
   m_Name: UIRoot
   m_TagString: Untagged
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
---- !u!114 &3218735453332628272
+--- !u!114 &9176147489553506451
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4266180390099140422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aceead0c9ed1a043bd6b341a5f325bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f29cf79baa3c428697486145dacd583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiRootDocument: {fileID: 3604889714751353562}
