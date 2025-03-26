@@ -17,10 +17,9 @@ namespace cfUnityEngine.GameState.Bootstrap
         public override GameStateId Id => GameStateId.UILoad;
         protected override void StartContext(StateParam param)
         {
-            var ui = UIRoot.Instance;
-
             var loadTaskList = new List<Task>
             {
+                Task.CompletedTask
             };
 
             Task.WhenAll(loadTaskList)

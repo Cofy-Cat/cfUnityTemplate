@@ -1,17 +1,8 @@
-using cfUnityEngine.UI;
-using UnityEngine.UIElements;
+using cfUnityEngine.UI.UGUI;
 
 public class LoadingUI: UIPanel
 {
+    public override string id => nameof(LoadingUI);
+    
     public string message = "Loading...";
-
-    protected override void OnVisualAttached()
-    {
-        
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-    }
 }

@@ -1,9 +1,0 @@
-<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Prefab/UI/CommonStyle.uss?fileID=7433441132597879392&amp;guid=4bacd3011efc4773913b69f2e0ce0e7e&amp;type=3#CommonStyle" />
-    <engine:VisualElement name="bg" class="bg" style="background-color: rgb(17, 16, 22);" />
-    <engine:Label text="!message" name="message" data-source-type="LoadingUI, ProjectName" data-source-path="message" class="text-center font-size-full" style="top: 80%; height: 48px; color: rgb(184, 184, 184); font-size: 50%;">
-        <Bindings>
-            <engine:DataBinding property="text" data-source-path="message" data-source-type="LoadingPanel, Assembly-CSharp" binding-mode="ToTarget" />
-        </Bindings>
-    </engine:Label>
-</engine:UXML>

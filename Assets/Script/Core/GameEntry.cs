@@ -12,15 +12,22 @@ using cfEngine.Util;
 using cfEngine.Service.Auth;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
+using cfUnityEngine.UI.UGUI;
+using cfUnityEngine.UI.UIToolkit;
 using RPG.Service.Dialogue;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 public class GameEntry : MonoBehaviour
 {
+    [SerializeField] 
+    private UGUIRoot uiRoot;
+    
     [Conditional("UNITY_EDITOR")]
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    public static void PreprocessInEditor()
+    private void Preprocess()
     {
         try
         {
@@ -31,14 +38,31 @@ public class GameEntry : MonoBehaviour
             Debug.LogException(e);
         }
     }
-    
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    public static void Init()
+    [Conditional("UNITY_EDITOR")]
+    private static void CreateEditorGameEntry()
     {
+        if(!FindAnyObjectByType<GameEntry>())
+        {
+            var gameEntry = Resources.Load<GameEntry>("Local/GameEntry");
+            if (gameEntry == null)
+            {
+                Debug.LogError("GameEntry prefab not found in Resources/Local");
+                return;
+            }
+            Instantiate(gameEntry);
+        }
+    }
+
+    private void Awake()
+    {
+        Preprocess();
+        
+        DontDestroyOnLoad(gameObject);
+        
         Log.SetLogger(new UnityLogger());
         Log.SetLogLevel(LogLevel.Debug);
-
-        var cts = new CancellationTokenSource();
 
         var game = new Game()
 #if CF_STATISTIC
@@ -62,23 +86,28 @@ public class GameEntry : MonoBehaviour
             ;
         
         Game.SetCurrent(game);
+        uiRoot.Initialize(game.GetAsset<Object>());
+        DontDestroyOnLoad(uiRoot);
+        UIRoot.SetCurrent(uiRoot);
 
         var gsm = Game.Current.GetGameStateMachine();
         gsm.OnAfterStateChange += OnStateChanged;
-        
-        Application.quitting += OnApplicationQuit;
-        
-        void OnApplicationQuit()
+
+        gsm.TryGoToState(GameStateId.LocalLoad);
+    }
+
+    private void OnApplicationQuit()
+    {
+        var gsm = Game.Current.GetGameStateMachine();
+        gsm.OnAfterStateChange -= OnStateChanged;
+        Application.quitting -= OnApplicationQuit;
+
+        if (UIRoot.Current != null)
         {
-            gsm.OnAfterStateChange -= OnStateChanged;
-            Application.quitting -= OnApplicationQuit;
-            
-            cts.Cancel();
-            if (UIRoot.Instance != null)
-            {
-                UIRoot.Instance.Dispose();
-            }
-            Game.Current.Dispose();
+            UIRoot.Current.Dispose();
+        }
+
+        Game.Current.Dispose();
 
 #if CF_REACTIVE_DEBUG
             var notDisposed = cfEngine.Rt._RtDebug.Instance.Collections;
@@ -93,45 +122,10 @@ public class GameEntry : MonoBehaviour
                 }
             }
 #endif
-        }
-        
-        gsm.TryGoToState(GameStateId.LocalLoad);
     }
-
+    
     private static void OnStateChanged(StateChangeRecord<GameStateId> record)
     {
         Log.LogInfo($"Game state changed, {record.LastState.ToString()} -> {record.NewState.ToString()}");
-    }
-
-    [Conditional("UNITY_EDITOR")]
-    public static void RegisterEditorPostBootstrapAction([NotNull] Action action)
-    {
-        RegisterPostBootstrapAction(action);
-    }
-
-    private static void RegisterPostBootstrapAction(Action action)
-    {
-        var gsm = Game.Current.GetGameStateMachine();
-        if (gsm.CurrentStateId > GameStateId.BootstrapEnd)
-        {
-            action?.Invoke();
-            return;
-        }
-        
-        gsm.OnAfterStateChange += OnBootstrapEnd;
-        void OnBootstrapEnd(StateChangeRecord<GameStateId> record)
-        {
-            if (record.NewState != GameStateId.BootstrapEnd)
-                return;
-            
-            gsm.OnAfterStateChange -= OnBootstrapEnd;
-            
-            action?.Invoke();
-        }
-    }
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
     }
 }

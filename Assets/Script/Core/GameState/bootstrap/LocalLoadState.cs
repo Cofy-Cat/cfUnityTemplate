@@ -1,8 +1,8 @@
 using cfEngine.Core;
 using cfEngine.Extension;
+using cfEngine.Logging;
 using cfEngine.Util;
 using cfUnityEngine.UI;
-using UnityEngine;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
@@ -11,15 +11,22 @@ namespace cfUnityEngine.GameState.Bootstrap
         public override GameStateId Id => GameStateId.LocalLoad;
         protected override void StartContext(StateParam param)
         {
-            var uiPrefab = Game.Current.GetAsset<Object>().Load<GameObject>("Local/UIRoot");
-            var ui = Object.Instantiate(uiPrefab).GetComponent<UIRoot>();
-
-            ui.Register<LoadingUI>("Local/LoadingUI");
-            ui.LoadPanel<LoadingUI>().ContinueWithSynchronized(t =>
-            {
-                t.Result.ShowPanel();
-                StateMachine.ForceGoToState(GameStateId.InfoLoad);
-            }, Game.TaskToken);
+            var ui = UIRoot.Current;
+            var loadingUI = ui.Register(new LoadingUI(), "Local/LoadingUI");
+            ui.PreloadPanel(loadingUI.id)
+                .ContinueWithSynchronized(t =>
+                {
+                    if (t.IsFaulted && t.Exception != null)
+                    {
+                        Log.LogException(t.Exception);
+                    }
+                    else
+                    {
+                        ui.InstantiatePanel(loadingUI.id);
+                        loadingUI.Show();
+                        StateMachine.ForceGoToState(GameStateId.InfoLoad);
+                    }
+                }, Game.TaskToken);
         }
     }
 }
