@@ -14,6 +14,7 @@ using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
 using cfUnityEngine.UI.UGUI;
 using cfUnityEngine.UI.UIToolkit;
+using cfUnityEngine.Util;
 using RPG.Service.Dialogue;
 using UnityEditor;
 using UnityEngine;
@@ -87,7 +88,7 @@ public class GameEntry : MonoBehaviour
         
         Game.SetCurrent(game);
         uiRoot.Initialize(game.GetAsset<Object>());
-        DontDestroyOnLoad(uiRoot);
+        GameObjectUtil.DontDestroyOnLoadIfRoot(uiRoot);
         UIRoot.SetCurrent(uiRoot);
 
         var gsm = Game.Current.GetGameStateMachine();
