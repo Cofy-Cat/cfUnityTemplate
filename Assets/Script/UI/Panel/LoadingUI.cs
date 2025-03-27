@@ -4,5 +4,5 @@ public class LoadingUI: UIPanel
 {
     public override string id => nameof(LoadingUI);
     
-    public string message = "Loading...";
+    private string message = "Loading...";
 }
