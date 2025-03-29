@@ -22,8 +22,14 @@ namespace cfUnityEngine.GameState.Bootstrap
                     }
                     else
                     {
-                        ui.InstantiatePanel(loadingUI.id);
-                        loadingUI.Show();
+                        ui.InstantiatePanel(loadingUI.id)
+                            .ContinueWithSynchronized(task =>
+                            {
+                                if (task.IsCompletedSuccessfully)
+                                {
+                                    loadingUI.Show();
+                                }
+                            });
                         StateMachine.ForceGoToState(GameStateId.InfoLoad);
                     }
                 }, Game.TaskToken);

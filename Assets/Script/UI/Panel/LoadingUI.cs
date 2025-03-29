@@ -1,3 +1,4 @@
+using cfUnityEngine;
 using cfUnityEngine.UI.UGUI;
 
 public class LoadingUI: UIPanel

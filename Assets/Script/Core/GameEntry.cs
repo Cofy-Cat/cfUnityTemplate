@@ -1,61 +1,28 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using cfEngine.Core;
 using cfEngine.Info;
 using cfEngine.IO;
 using cfEngine.Logging;
 using cfEngine.Pooling;
+using cfEngine.Rx;
 using cfEngine.Serialize;
 using cfEngine.Util;
 using cfEngine.Service.Auth;
 using cfUnityEngine.GameState;
 using cfUnityEngine.UI;
 using cfUnityEngine.UI.UGUI;
-using cfUnityEngine.UI.UIToolkit;
 using cfUnityEngine.Util;
 using RPG.Service.Dialogue;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-public class GameEntry : MonoBehaviour
+public partial class GameEntry : MonoBehaviour
 {
     [SerializeField] 
     private UGUIRoot uiRoot;
     
-    [Conditional("UNITY_EDITOR")]
-    private void Preprocess()
-    {
-        try
-        {
-            GameExtension.InfoBuildByte();
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-        }
-    }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    [Conditional("UNITY_EDITOR")]
-    private static void CreateEditorGameEntry()
-    {
-        if(!FindAnyObjectByType<GameEntry>())
-        {
-            var gameEntry = Resources.Load<GameEntry>("Local/GameEntry");
-            if (gameEntry == null)
-            {
-                Debug.LogError("GameEntry prefab not found in Resources/Local");
-                return;
-            }
-            Instantiate(gameEntry);
-        }
-    }
-
+    Subscription stateChangeSubscription;
     private void Awake()
     {
         Preprocess();
@@ -92,15 +59,13 @@ public class GameEntry : MonoBehaviour
         UIRoot.SetCurrent(uiRoot);
 
         var gsm = Game.Current.GetGameStateMachine();
-        gsm.OnAfterStateChange += OnStateChanged;
+        stateChangeSubscription = gsm.SubscribeAfterStateChange(OnStateChanged);
 
         gsm.TryGoToState(GameStateId.LocalLoad);
     }
 
     private void OnApplicationQuit()
     {
-        var gsm = Game.Current.GetGameStateMachine();
-        gsm.OnAfterStateChange -= OnStateChanged;
         Application.quitting -= OnApplicationQuit;
 
         if (UIRoot.Current != null)
