@@ -1,4 +1,5 @@
 using cfEngine.Util;
+using cfUnityEngine.UI;
 
 namespace cfUnityEngine.GameState.Bootstrap
 {
@@ -7,6 +8,7 @@ namespace cfUnityEngine.GameState.Bootstrap
         public override GameStateId Id => GameStateId.BootstrapEnd;
         protected override void StartContext(StateParam stateParam)
         {
+            UIRoot.Current.GetPanel<LoadingUI>().Hide();
         }
     }
 }

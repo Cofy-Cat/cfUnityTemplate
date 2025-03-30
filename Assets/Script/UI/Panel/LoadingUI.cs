@@ -3,7 +3,12 @@ using cfUnityEngine.UI.UGUI;
 
 public class LoadingUI: UIPanel
 {
-    public override string id => nameof(LoadingUI);
-    
-    private string message = "Loading...";
+    private string message;
+
+    public override void Bind(INamespaceScope scope)
+    {
+        base.Bind(scope);
+        BindSubspace(scope, nameof(message), this);
+        OnPropertyChanged(nameof(message), "Loading...");
+    }
 }
