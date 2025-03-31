@@ -13,7 +13,8 @@ namespace cfUnityEngine.GameState.Bootstrap
         {
             var ui = UIRoot.Current;
             var loadingUI = ui.Register(new LoadingUI(), "Local/LoadingUI");
-            ui.PreloadPanel<LoadingUI>()
+            var panelId = loadingUI.id;
+            ui.PreloadPanel(panelId)
                 .ContinueWithSynchronized(t =>
                 {
                     if (t.IsFaulted && t.Exception != null)
@@ -22,7 +23,7 @@ namespace cfUnityEngine.GameState.Bootstrap
                     }
                     else
                     {
-                        ui.InstantiatePanel<LoadingUI>()
+                        ui.InstantiatePanel(panelId)
                             .ContinueWithSynchronized(task =>
                             {
                                 if (task.IsCompletedSuccessfully)
