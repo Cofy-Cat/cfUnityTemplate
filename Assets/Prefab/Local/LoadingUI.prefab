@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: -717290432390679420}
   - component: {fileID: 5570084069506055910}
   - component: {fileID: 2558680255439454104}
-  - component: {fileID: -5514788013764985239}
+  - component: {fileID: 5639210003003999423}
   m_Layer: 0
   m_Name: LoadingUI
   m_TagString: Untagged
@@ -208,7 +208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolvers:
-  - {fileID: -5514788013764985239}
+  - {fileID: 5639210003003999423}
 --- !u!114 &2558680255439454104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolvers:
   - {fileID: 7121067719784665553}
---- !u!114 &-5514788013764985239
+--- !u!114 &5639210003003999423
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

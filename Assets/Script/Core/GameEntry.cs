@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using cfEngine.Core;
 using cfEngine.Info;
 using cfEngine.IO;
@@ -20,9 +18,11 @@ using Object = UnityEngine.Object;
 public partial class GameEntry : MonoBehaviour
 {
     [SerializeField] 
-    private UGUIRoot uiRoot;
+    private UGUIRoot uiRootPrefab;
     
+    #pragma warning disable 0414
     Subscription stateChangeSubscription;
+    #pragma warning disable 0414
     private void Awake()
     {
         Preprocess();
@@ -54,6 +54,7 @@ public partial class GameEntry : MonoBehaviour
             ;
         
         Game.SetCurrent(game);
+        var uiRoot = Instantiate(uiRootPrefab);
         uiRoot.Initialize(game.GetAsset<Object>());
         GameObjectUtil.DontDestroyOnLoadIfRoot(uiRoot);
         UIRoot.SetCurrent(uiRoot);
