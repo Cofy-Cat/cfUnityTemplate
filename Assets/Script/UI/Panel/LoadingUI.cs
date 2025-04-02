@@ -10,7 +10,7 @@ public class LoadingUI: UIPanel
     public override void Bind(INamespaceScope scope)
     {
         base.Bind(scope);
-        BindSubspace(scope, nameof(message), this);
+        
         OnPropertyChanged(nameof(message), "Loading...");
     }
 }
