@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using cfEngine.Core;
 using cfEngine.Info;
+using cfEngine.Serialize;
 using cfEngine.Service;
 using cfEngine.Util;
 using cfEngine.Service.Auth;
@@ -21,7 +22,7 @@ namespace cfUnityEngine.GameState.Bootstrap
             
             RegisterInfos(infoLayer);
 
-            var infoLoadTasks = infoLayer.InfoMap.Values.Select(info => info.LoadSerializedAsync(Game.TaskToken));
+            var infoLoadTasks = infoLayer.InfoMap.Values.Select(info => info.LoadInfoAsync(Game.TaskToken));
             Task.WhenAll(infoLoadTasks).ContinueWith(t =>
             {
                 StateMachine.TryGoToState(GameStateId.Login, new LoginState.Param()
@@ -34,8 +35,10 @@ namespace cfUnityEngine.GameState.Bootstrap
 
         private void RegisterInfos(InfoLayer info)
         {
-            info.RegisterInfo(new InventoryInfoManager());
-            info.RegisterInfo(new DialogueInfoManager());
+            var storage = new StreamingAssetStorage("Info");
+            var serializer = JsonSerializer.Instance;
+            info.RegisterInfo(new InventoryInfoManager(new SerializationLoader<InventoryInfo>(storage, serializer)));
+            info.RegisterInfo(new DialogueInfoManager(new SerializationLoader<DialogueInfo>(storage, serializer)));
         }
     }
 }

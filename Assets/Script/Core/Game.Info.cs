@@ -1,36 +1,44 @@
 using System.Diagnostics;
+using System.IO;
 using cfEngine.Info;
 using cfEngine.Service;
 using cfEngine.Serialize;
 using RPG.Info;
+using UnityEditor;
 
 namespace cfEngine.Core
 {
     public static partial class GameExtension
     {
-        private static InfoManager[] _allInfo = new InfoManager[]
-        {
-            new InventoryInfoManager(),
-            new DialogueInfoManager()
-        };
-
+        [MenuItem("Cf Tools/Info/Build Byte Info", false, 0)]
         [Conditional("UNITY_EDITOR")]
         public static void InfoBuildByte()
         {
-            var editorLayer = new InfoLayer(new EditorAssetStorage("Info"), JsonSerializer.Instance);
-
-            foreach (var info in _allInfo)
+            var editorStorage = new EditorAssetStorage("Info");
+            var encoder = new CofyDev.Xml.Doc.DataObjectEncoder();
+            var editorInfos = new InfoManager[]
             {
-                editorLayer.RegisterInfo(info);
-                info.DirectlyLoadFromExcel();
+                new InventoryInfoManager(new ExcelByteLoader<InventoryInfo>(CreateEditorStorage(nameof(InventoryInfo)), encoder)),
+                new DialogueInfoManager(new ExcelByteLoader<DialogueInfo>(CreateEditorStorage(nameof(DialogueInfo)), encoder))
+            };
+
+            EditorAssetStorage CreateEditorStorage(string infoDirectory)
+            {
+                return new EditorAssetStorage(Path.Combine("Info", infoDirectory));
             }
 
-            var runtimeLayer = new InfoLayer(new StreamingAssetStorage("Info"), JsonSerializer.Instance);
-
-            foreach (var info in _allInfo)
+            foreach (var info in editorInfos)
             {
-                runtimeLayer.RegisterInfo(info);
-                info.SerializeIntoStorage();
+                info.LoadInfo();
+            }
+
+            var streamingStorage = new StreamingAssetStorage("Info");
+            var serializer = JsonSerializer.Instance;
+            foreach (var infoManager in editorInfos)
+            {
+                var allValue = infoManager.GetAllValue();
+                var serialized = serializer.Serialize(allValue);
+                streamingStorage.Save(infoManager.infoDirectory, serialized);
             }
         }
     }

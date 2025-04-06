@@ -6,9 +6,10 @@ namespace RPG.Info
 {
     public class DialogueInfoManager: ConfigInfoManager<string, DialogueInfo>
     {
-        public override string infoKey => nameof(DialogueInfoManager);
         public override string infoDirectory => nameof(DialogueInfo);
         protected override Func<DialogueInfo, string> keyFn => x => x.id;
+
+        public DialogueInfoManager(IValueLoader<DialogueInfo> loader) : base(loader) { }
     }
 
     [Serializable]

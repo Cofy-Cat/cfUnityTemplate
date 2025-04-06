@@ -28,7 +28,7 @@ public partial class GameEntry : MonoBehaviour
         Preprocess();
         
         DontDestroyOnLoad(gameObject);
-        
+
         Log.SetLogger(new UnityLogger());
         Log.SetLogLevel(LogLevel.Debug);
 
