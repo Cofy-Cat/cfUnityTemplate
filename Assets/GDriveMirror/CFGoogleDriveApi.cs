@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class CFGoogleDriveApi : MonoBehaviour
 {
-    private const string JsonPath = "Assets/cfkey_GoogleDriveApi.json";
+    private const string JsonPath = "Assets/cfkey_GoogleServiceAccount.json";
     
     void Start()
     {
         var credentialJson = AssetDatabase.LoadAssetAtPath<TextAsset>(JsonPath);
-        Debug.Log(credentialJson?.text);
         if (credentialJson != null)
         {
+            Debug.Log(credentialJson?.text);
             var credential = GoogleCredential.FromJson(credentialJson.text)
                 .CreateScoped(new[] { DriveService.ScopeConstants.DriveReadonly });
             
