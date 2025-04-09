@@ -12,8 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a0ab41a0144dbea19d53d7d91e7a29, type: 3}
   m_Name: MirrorSetting
   m_EditorClassIdentifier: 
-  serviceAccountCredentialJson: {fileID: 4900000, guid: 4820b8b4c4a6e4e7daa458e406ef6d9e, type: 3}
-  refreshIntervalSecond: 5
-  items:
-  - googleDriveId: 1ReGe4c8b8x6d5quufdb395w_PhP_68UR6UGdJRd24FU
-    mirrorAssetLocation: 
+  serviceAccountCredentialJson: {fileID: 4900000, guid: 25bcaeda069073043be1e0ec16d103a8, type: 3}
+  items: []
