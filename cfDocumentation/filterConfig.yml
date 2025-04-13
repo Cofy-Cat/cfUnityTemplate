@@ -1,0 +1,6 @@
+apiRules:
+  - exclude:
+      uidRegex: ^UnityEngine
+  - exclude:
+      hasAttribute:
+        uid: System.ObsoleteAttribute

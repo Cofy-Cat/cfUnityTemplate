@@ -73,3 +73,7 @@ Assets/StreamingAssets.meta
 *.xlsx#
 
 cfkey*
+
+cfDocumentation/_site/
+
+cfDocumentation/api/
