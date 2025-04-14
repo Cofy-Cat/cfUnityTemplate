@@ -77,3 +77,7 @@ cfkey*
 cfDocumentation/_site/
 
 cfDocumentation/api/
+
+cfDocumentation/
+
+.idea/
